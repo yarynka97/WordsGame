@@ -1,0 +1,27 @@
+﻿#words-field{
+    border: 0.5px solid lightgrey;
+    width: 100%;
+    height: 300px
+}
+
+.play-field{
+    border: 0.5px solid lightgreen;
+}
+.title {
+    color: darkgrey;
+    font-size: large;
+    font-weight: bold;
+}
+
+form{
+    height: 100px;
+    border-bottom: 0.5px solid lightgrey;
+}
+
+.bot-answer-mistake{
+    color:darkred;
+}
+
+.bot-answer-ok {
+    color: lightgreen;
+}
