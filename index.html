@@ -4,25 +4,28 @@
         <title>Words Game</title>
         <link rel="stylesheet" href="style.css" />
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-
-        <script src="js/jquery-3.3.1.js"></script>
-        <script src="js/jquery-ui.js"></script>
-        <script src="js/script.js"></script>
     </head>
     <body>
         <div class="row">
-            <div id="words-field" class="col-lg-8"></div>
-            <div class="col-lg-4 play-field">
+            <div class="col-lg-9 col-md-8 col-sm-7">
+                <h3 class="title">WORDS LINE</h3>
+                <div id="words-field"></div>
+            </div>
+            <div class="col-lg-3 col-md-4 col-sm-5 play-field">
                 <div class="form">
                     <p class="title">USER</p>
                     <input type="text" required id="users_word" />
                     <button>Add Word</button>
                 </div>
-                <div >
+                <div>
                     <p class="title">BOT</p>
                     <p id="bot-answer"></p>
                 </div>
             </div>
-        </div>   
+        </div>
+
+        <script src="js/jquery-3.3.1.js"></script>
+        <script src="js/script.js"></script>
+        <script>$(game);</script>
     </body>
 </html>

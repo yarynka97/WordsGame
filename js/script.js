@@ -1,16 +1,21 @@
-﻿$(function () {
+﻿function game () {
     var usedWords = [];
     var commonUrl = "https://api.datamuse.com/words?sp=";
     var urlToSend;
     var mistakeText;
+    var $wordsField = $("#words-field");
+    var $botAnswerText = $("#bot-answer");
+
     setFirstWord();
     $("button").click(setNewWord);
+    $("input").keypress(function (event) {
+        if (event.which == 13) setNewWord();   
+    });
 
     function setFirstWord() {
-        $("#bot-answer").addClass("bot-answer-ok");
         var randomLetter = Math.random().toString(36).replace(/[^a-z]+/g, '').substr(0, 1);
         urlToSend = commonUrl + randomLetter + "*";
-        setTimeout(sendRequest(urlToSend), 2000);
+        sendRequest(urlToSend);
     }
 
     function setNewWord() {
@@ -18,35 +23,40 @@
         var valid = checkWord(usersWord);
         if (valid) {
             usedWords.push(usersWord);
-            $("#words-field").append(" - " + usersWord + " - ");
+            $wordsField.append(" - <span class='users-word'>" + usersWord + "</span> - ");
             var lastLetter = usersWord[usersWord.length - 1];
             urlToSend = commonUrl + lastLetter + "*";
             sendRequest(urlToSend);
         } else {
-            $("#bot-answer").removeClass("bot-answer-ok").addClass("bot-answer-mistake").text(mistakeText);
+            $botAnswerText.removeClass("bot-answer-ok").addClass("bot-answer-mistake").text(mistakeText);
         }
         console.log(usedWords);
     }
 
     function sendRequest(requestUrl) {
-        $.ajax({
+        var request = $.ajax({
             type: "GET",
             url: requestUrl,
-            success: function (words) {
-                var valid;
-                do {
-                    var word = words[parseInt(Math.random() * words.length)].word;
-                    valid = checkUsedWords(word);
-                } while (!valid);
-                usedWords.push(word);
-                $("#bot-answer")
-                    .removeClass("bot-answer-mistake")
-                    .addClass("bot-answer-ok")
-                    .text("My word is "+ word);
-
-                $("#words-field").append(word);    
-            }
         });
+        request.done(function (words) {
+            var valid;
+            do {
+                var word = words[parseInt(Math.random() * words.length)].word;
+                valid = checkUsedWords(word);
+                if (word.length < 2) valid = false;
+            } while (!valid);
+            usedWords.push(word);
+            setCorrectAnswer(word);
+        });
+    }
+
+    function setCorrectAnswer(word) {
+        $botAnswerText
+            .removeClass("bot-answer-mistake")
+            .addClass("bot-answer-ok")
+            .text("My word is ")
+            .append("<span class='bots-word'>" + word + "</span>");
+        $wordsField.append(word.substr(0, word.length - 1)).append("<span style='color:crimson'>" + word.slice(-1) + "</span>");
     }
 
     function checkWord(word) {
@@ -60,16 +70,22 @@
             valid = checkUsedWords(word);
             if (valid) {
                 urlToSend = commonUrl + word;
-                $.ajax({
+                var request = $.ajax({
                     type: 'GET',
                     url: urlToSend,
-                    success: function (words) {
-                        if (words.length < 1) {
-                            mistakeText = "Your word doesn't exist";
-                            valid = false;
-                        }
+                    async: false
+                });
+                request.done(function (words) {
+                    if (words.length < 1) {
+                        mistakeText = "Your word doesn't exist";
+                        valid = false;
                     }
                 });
+            } else {
+                if (word.length < 2) {
+                    mistakeText = "Please, type word with at least 2 letters";
+                    valid = false;
+                }
             }
         }
         return valid;
@@ -84,4 +100,4 @@
         });
         return valid;
     }
-});
+}
